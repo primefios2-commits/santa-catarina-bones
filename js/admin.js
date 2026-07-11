@@ -16,7 +16,7 @@ const btnCancelar = document.getElementById('btn-cancelar');
 let imagensAtuais = [];
 let imagemCapa = '';
 
-// Verificação de Autenticação
+// Verifica o estado de Autenticação
 onAuthStateChanged(auth, (user) => {
     if (user) {
         loginView.classList.add('oculto');
@@ -29,28 +29,35 @@ onAuthStateChanged(auth, (user) => {
 });
 
 // Login
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const errorMsg = document.getElementById('login-error');
-    
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-        errorMsg.style.display = 'none';
-    } catch (error) {
-        errorMsg.textContent = "Credenciais inválidas. Tente novamente.";
-        errorMsg.style.display = 'block';
-    }
-});
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorMsg = document.getElementById('login-error');
+        
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            if (errorMsg) errorMsg.style.display = 'none';
+        } catch (error) {
+            if (errorMsg) {
+                errorMsg.textContent = "Credenciais inválidas. Tente novamente.";
+                errorMsg.style.display = 'block';
+            }
+        }
+    });
+}
 
 // Logout
-btnLogout.addEventListener('click', () => {
-    signOut(auth);
-});
+if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+        signOut(auth);
+    });
+}
 
 // Carregar Produtos
 async function carregarProdutosAdmin() {
+    if (!tabelaProdutos) return;
     tabelaProdutos.innerHTML = '<tr><td colspan="5">Carregando...</td></tr>';
     try {
         const querySnapshot = await getDocs(collection(db, "produtos"));
@@ -77,35 +84,35 @@ async function carregarProdutosAdmin() {
 }
 
 // Upload Cloudinary
-uploadImagem.addEventListener('change', async (e) => {
-    const files = e.target.files;
-    if(files.length === 0) return;
-
-    // Loading estado visual pode ser adicionado aqui
-    
-    for (let file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', cloudinaryConfig.uploadPreset);
-
-        try {
-            const response = await fetch(cloudinaryConfig.uploadUrl, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            imagensAtuais.push(data.secure_url);
-            if(!imagemCapa) imagemCapa = data.secure_url; // primeira img vira capa por padrão
-        } catch (error) {
-            console.error("Erro no upload", error);
-            customAlert("Erro ao fazer upload da imagem.");
+if (uploadImagem) {
+    uploadImagem.addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if(files.length === 0) return;
+        
+        for (let file of files) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+            try {
+                const response = await fetch(cloudinaryConfig.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                imagensAtuais.push(data.secure_url);
+                if(!imagemCapa) imagemCapa = data.secure_url; 
+            } catch (error) {
+                console.error("Erro no upload", error);
+                customAlert("Erro ao fazer upload da imagem.");
+            }
         }
-    }
-    renderizarPreview();
-    uploadImagem.value = '';
-});
+        renderizarPreview();
+        uploadImagem.value = '';
+    });
+}
 
 function renderizarPreview() {
+    if (!previewImagens) return;
     previewImagens.innerHTML = '';
     imagensAtuais.forEach((url, index) => {
         const wrapper = document.createElement('div');
@@ -118,7 +125,6 @@ function renderizarPreview() {
             imagemCapa = url;
             renderizarPreview();
         };
-
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-btn';
         removeBtn.innerHTML = '&times;';
@@ -128,7 +134,6 @@ function renderizarPreview() {
             if(imagemCapa === url) imagemCapa = imagensAtuais[0] || '';
             renderizarPreview();
         };
-
         wrapper.appendChild(img);
         wrapper.appendChild(removeBtn);
         previewImagens.appendChild(wrapper);
@@ -136,41 +141,49 @@ function renderizarPreview() {
 }
 
 // Salvar (Criar ou Atualizar)
-produtoForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    document.getElementById('btn-salvar').textContent = "Salvando...";
-    document.getElementById('btn-salvar').disabled = true;
-
-    const id = document.getElementById('produto-id').value;
-    const produto = {
-        nome: document.getElementById('produto-nome').value,
-        categoria: document.getElementById('produto-categoria').value,
-        descricao: document.getElementById('produto-descricao').value,
-        pedido_minimo: document.getElementById('produto-minimo').value,
-        preco: document.getElementById('produto-preco').value,
-        imagens: imagensAtuais,
-        capa: imagemCapa
-    };
-
-    try {
-        if (id) {
-            await updateDoc(doc(db, "produtos", id), produto);
-            customAlert("Produto atualizado com sucesso!");
-        } else {
-            await addDoc(collection(db, "produtos"), produto);
-            customAlert("Produto adicionado com sucesso!");
+if (produtoForm) {
+    produtoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSalvar = document.getElementById('btn-salvar');
+        if (btnSalvar) {
+            btnSalvar.textContent = "Salvando...";
+            btnSalvar.disabled = true;
         }
-        resetForm();
-        carregarProdutosAdmin();
-    } catch (error) {
-        console.error("Erro ao salvar", error);
-        customAlert("Erro ao salvar produto.");
-    } finally {
-        document.getElementById('btn-salvar').textContent = "Salvar Produto";
-        document.getElementById('btn-salvar').disabled = false;
-    }
-});
+        
+        const id = document.getElementById('produto-id').value;
+        const produto = {
+            nome: document.getElementById('produto-nome').value,
+            categoria: document.getElementById('produto-categoria').value,
+            descricao: document.getElementById('produto-descricao').value,
+            pedido_minimo: document.getElementById('produto-minimo').value,
+            preco: document.getElementById('produto-preco').value,
+            imagens: imagensAtuais,
+            capa: imagemCapa
+        };
+        
+        try {
+            if (id) {
+                await updateDoc(doc(db, "produtos", id), produto);
+                customAlert("Produto atualizado com sucesso!");
+            } else {
+                await addDoc(collection(db, "produtos"), produto);
+                customAlert("Produto adicionado com sucesso!");
+            }
+            resetForm();
+            carregarProdutosAdmin();
+        } catch (error) {
+            console.error("Erro ao salvar", error);
+            customAlert("Erro ao salvar produto. Verifique as regras do banco.");
+        } finally {
+            if (btnSalvar) {
+                btnSalvar.textContent = "Salvar Produto";
+                btnSalvar.disabled = false;
+            }
+        }
+    });
+}
 
+// Escopo Global para os botões da tabela funcionarem
 window.editarProduto = async function(id) {
     try {
         const querySnapshot = await getDocs(collection(db, "produtos"));
@@ -188,12 +201,12 @@ window.editarProduto = async function(id) {
             imagemCapa = data.capa || (imagensAtuais.length > 0 ? imagensAtuais[0] : '');
             
             document.getElementById('form-titulo').textContent = "Editar Produto";
-            btnCancelar.style.display = 'inline-block';
+            if (btnCancelar) btnCancelar.style.display = 'inline-block';
             renderizarPreview();
             window.scrollTo(0, 0);
         }
     } catch(e) { console.error(e); }
-}
+};
 
 window.deletarProduto = async function(id) {
     if(confirm("Tem certeza que deseja excluir este produto?")) {
@@ -205,21 +218,24 @@ window.deletarProduto = async function(id) {
             customAlert("Erro ao excluir.");
         }
     }
+};
+
+if (btnCancelar) {
+    btnCancelar.addEventListener('click', resetForm);
 }
 
-btnCancelar.addEventListener('click', resetForm);
-
 function resetForm() {
-    produtoForm.reset();
+    if (produtoForm) produtoForm.reset();
     document.getElementById('produto-id').value = '';
     imagensAtuais = [];
     imagemCapa = '';
-    document.getElementById('form-titulo').textContent = "Adicionar Produto";
-    btnCancelar.style.display = 'none';
+    const formTitulo = document.getElementById('form-titulo');
+    if (formTitulo) formTitulo.textContent = "Adicionar Produto";
+    if (btnCancelar) btnCancelar.style.display = 'none';
     renderizarPreview();
 }
 
-function customAlert(msg) {
+window.customAlert = function(msg) {
     const alertDiv = document.createElement('div');
     alertDiv.textContent = msg;
     alertDiv.style.position = 'fixed';
