@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Santa Catarina Bonés</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-view" class="admin-login-wrapper">
+        <div class="admin-card">
+            <h2 class="section-title" style="font-size:1.8rem; margin-bottom: 2rem;">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="login-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="login-password" class="form-control" required>
+                </div>
+                <p id="login-error" style="color:red; font-size:0.9rem; margin-bottom:1rem; display:none;"></p>
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard-view" class="admin-container oculto">
+        <div class="admin-header">
+            <h2>Painel de Controle</h2>
+            <button id="btn-logout" class="btn-secundario">Sair</button>
+        </div>
+
+        <div class="admin-panel-card">
+            <h3 style="margin-bottom: 1.5rem;" id="form-titulo">Adicionar Produto</h3>
+            <form id="produto-form">
+                <input type="hidden" id="produto-id">
+                
+                <div class="form-group">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="produto-nome" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="produto-categoria" class="form-control" required>
+                        <option value="bones">Bonés</option>
+                        <option value="chapeus">Chapéus</option>
+                        <option value="moletons">Moletons</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="produto-descricao" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label>Pedido Mínimo (Ex: Mínimo: 50 un)</label>
+                        <input type="text" id="produto-minimo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (Ex: A partir de R$ 28,00/un)</label>
+                        <input type="text" id="produto-preco" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagens da Galeria (Envio via Cloudinary)</label>
+                    <input type="file" id="upload-imagem" class="form-control" accept="image/*" multiple>
+                    <p style="font-size: 0.85rem; color: var(--cinza-grafite); margin-top: 0.5rem;">Clique em uma imagem após o upload para defini-la como CAPA.</p>
+                    <div id="preview-imagens" class="image-preview-container"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-salvar">Salvar Produto</button>
+                <button type="button" class="btn-secundario" id="btn-cancelar" style="display:none; margin-top:1rem;">Cancelar Edição</button>
+            </form>
+        </div>
+
+        <div class="admin-panel-card">
+            <h3 style="margin-bottom: 1rem;">Produtos Cadastrados</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Capa</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-produtos">
+                    <!-- Produtos populados via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
