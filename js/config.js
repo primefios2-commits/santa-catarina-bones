@@ -15,10 +15,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const cloudinaryConfig = {
-    cloudName: "u3rfnusa",
-    uploadPreset: "site_catalogo",
-    uploadUrl: "https://api.cloudinary.com/v1_1/u3rfnusa/image/upload"
+export const cloudinaryConfig = {
+    cloudName: "jd95mbvc",
+    uploadPreset: "fotos_produtos",
+    uploadUrl: "https://api.cloudinary.com/v1_1/jd95mbvc/image/upload"
 };
 
-export { db, auth, cloudinaryConfig };
+export { db, auth };
