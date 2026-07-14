@@ -94,6 +94,24 @@
                     </tr>
                 </thead>
                 <tbody id="tabela-produtos">
+                    <!-- Seção de Configuração do WhatsApp no seu Painel Admin -->
+<section class="admin-section">
+    <h2>Configurações de Contato (WhatsApp)</h2>
+    <form id="form-config-whatsapp">
+        <div class="form-group">
+            <label for="whatsapp-numero">Número do WhatsApp (com DDD, apenas números):</label>
+            <input type="text" id="whatsapp-numero" placeholder="Ex: 47989105183" required>
+            <small>Insira o código do país + DDD + Número. Ex: 5547989105183</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="whatsapp-mensagem">Mensagem Padrão (Opcional):</label>
+            <input type="text" id="whatsapp-mensagem" placeholder="Ex: Olá! Gostaria de saber mais sobre os bonés.">
+        </div>
+        
+        <button type="submit" class="btn-salvar">Salvar Configurações</button>
+    </form>
+</section>
                     <!-- Produtos populados via JS -->
                 </tbody>
             </table>
